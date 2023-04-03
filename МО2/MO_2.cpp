@@ -557,7 +557,6 @@ void Method::Recount_Hessen_approx(real lambda_num) {
 void Method::Broyden_method() {
 	int iteration = 0;
 	real lambda_num;
-	vector<real> g(2, 0), dx(2, 0), tmp(2, 0);
 	ofstream out("Broyden.txt");
 
 	Gradient_vector();
