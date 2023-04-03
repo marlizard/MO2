@@ -8,98 +8,100 @@ using namespace std;
 
 typedef double real;
 
-//Тип экстремума(1 - минимум, 2 - максимум)
+//РўРёРї СЌРєСЃС‚СЂРµРјСѓРјР°(1 - РјРёРЅРёРјСѓРј, 2 - РјР°РєСЃРёРјСѓРј)
 #define extr_type 2
 
-//Номер целевой функции (Основная - 1, Квадратичная - 2, Розенброка - 3)
+//РќРѕРјРµСЂ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё (РћСЃРЅРѕРІРЅР°СЏ - 1, РљРІР°РґСЂР°С‚РёС‡РЅР°СЏ - 2, Р РѕР·РµРЅР±СЂРѕРєР° - 3)
 #define function 1
 
-//Одномерный метод поиска лямбды (Фибоначчи - 1, Парабол - 2)
-#define lambda_max 1
+//РћРґРЅРѕРјРµСЂРЅС‹Р№ РјРµС‚РѕРґ РїРѕРёСЃРєР° Р»СЏРјР±РґС‹ (Р¤РёР±РѕРЅР°С‡С‡Рё - 1, РџР°СЂР°Р±РѕР» - 2)
+#define lambda_max 2
 
-//Номер метода (Ньютон - 1, Бройден - 2)
+//РќРѕРјРµСЂ РјРµС‚РѕРґР° (РќСЊСЋС‚РѕРЅ - 1, Р‘СЂРѕР№РґРµРЅ - 2)
 #define method 2
 
 class Method {
 public:
-	//Вектор х(k)
+	//Р’РµРєС‚РѕСЂ С…(k)
 	vector<real> x;
-	//Вектор х(k+1)
+	//Р’РµРєС‚РѕСЂ С…(k+1)
 	vector<real> xn;
-	//Напраление поиска
+	//РќР°РїСЂР°Р»РµРЅРёРµ РїРѕРёСЃРєР°
 	vector<real> s;
-	//Точность для приближений
+	//РўРѕС‡РЅРѕСЃС‚СЊ РґР»СЏ РїСЂРёР±Р»РёР¶РµРЅРёР№
 	vector<real> ex = { 10e-7, 10e-7 };
-	//Точность для функций
+	//РўРѕС‡РЅРѕСЃС‚СЊ РґР»СЏ С„СѓРЅРєС†РёР№
 	real ef = 10e-7;
-	//Матрица Гессена
+	//РњР°С‚СЂРёС†Р° Р“РµСЃСЃРµРЅР°
 	vector<vector<real>> Hessen;
-	//Вектор градиента
+	//Р’РµРєС‚РѕСЂ РіСЂР°РґРёРµРЅС‚Р° РѕР±РЅРѕРІР»РµРЅРЅС‹Р№
 	vector<real> Gradient;
-	//Количество обращений к функции
+	//Р’РµРєС‚РѕСЂ РіСЂР°РґРёРµРЅС‚Р° СѓСЃС‚Р°СЂРµРІС€РёР№
+	vector<real> grad;
+	//РљРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЂР°С‰РµРЅРёР№ Рє С„СѓРЅРєС†РёРё
 	int used_f;
 
-	//Целевая функция
+	//Р¦РµР»РµРІР°СЏ С„СѓРЅРєС†РёСЏ
 	real f(real x, real y);
 
-	//Первая производная целевой функции по х
+	//РџРµСЂРІР°СЏ РїСЂРѕРёР·РІРѕРґРЅР°СЏ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё РїРѕ С…
 	real f_x(real x, real y);
 
-	//Первая производная целевой функции по у
+	//РџРµСЂРІР°СЏ РїСЂРѕРёР·РІРѕРґРЅР°СЏ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё РїРѕ Сѓ
 	real f_y(real x, real y);
 
-	//Вторая производная целевой функции по х и х
+	//Р’С‚РѕСЂР°СЏ РїСЂРѕРёР·РІРѕРґРЅР°СЏ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё РїРѕ С… Рё С…
 	real f_x2(real x, real y);
 
-	//Вторая производная целевой функции по х и у
+	//Р’С‚РѕСЂР°СЏ РїСЂРѕРёР·РІРѕРґРЅР°СЏ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё РїРѕ С… Рё Сѓ
 	real f_xy(real x, real y);
 
-	//Вторая производная целевой функции по у и у
+	//Р’С‚РѕСЂР°СЏ РїСЂРѕРёР·РІРѕРґРЅР°СЏ С†РµР»РµРІРѕР№ С„СѓРЅРєС†РёРё РїРѕ Сѓ Рё Сѓ
 	real f_y2(real x, real y);
 
-	//Ввод данных
+	//Р’РІРѕРґ РґР°РЅРЅС‹С…
 	void input();
 
-	//Пересчет матрицы Гессена
+	//РџРµСЂРµСЃС‡РµС‚ РјР°С‚СЂРёС†С‹ Р“РµСЃСЃРµРЅР°
 	void Hessen_matrix();
 
-	//Пересчет вектора градиента
+	//РџРµСЂРµСЃС‡РµС‚ РІРµРєС‚РѕСЂР° РіСЂР°РґРёРµРЅС‚Р°
 	void Gradient_vector();
 
-	//Угол между векторами х и s
+	//РЈРіРѕР» РјРµР¶РґСѓ РІРµРєС‚РѕСЂР°РјРё С… Рё s
 	real angle();
 
-	//Пересчет направления поиска
+	//РџРµСЂРµСЃС‡РµС‚ РЅР°РїСЂР°РІР»РµРЅРёСЏ РїРѕРёСЃРєР°
 	void search_direction();
 
-	//Функция от лямбды
+	//Р¤СѓРЅРєС†РёСЏ РѕС‚ Р»СЏРјР±РґС‹
 	real lambda_f(real lambda_number);
 
-	//Нахождение промежутка
+	//РќР°С…РѕР¶РґРµРЅРёРµ РїСЂРѕРјРµР¶СѓС‚РєР°
 	void interval(real& a, real& b);
 
-	//Нахождение лямбда методом Фибоначчиа
+	//РќР°С…РѕР¶РґРµРЅРёРµ Р»СЏРјР±РґР° РјРµС‚РѕРґРѕРј Р¤РёР±РѕРЅР°С‡С‡РёР°
 	real Fibonacci_method();
 
-	//Число Фибоначчи под номером n
+	//Р§РёСЃР»Рѕ Р¤РёР±РѕРЅР°С‡С‡Рё РїРѕРґ РЅРѕРјРµСЂРѕРј n
 	real fibonacci(int n);
 
-	//Нахождение лямбда методом парабол
+	//РќР°С…РѕР¶РґРµРЅРёРµ Р»СЏРјР±РґР° РјРµС‚РѕРґРѕРј РїР°СЂР°Р±РѕР»
 	real Parabolic_method();
 
-	//Реализация метода Ньютона
+	//Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґР° РќСЊСЋС‚РѕРЅР°
 	void Newton_method();
 
-	//Пересчет добавки к аппроксимированной матрице Гессена
+	//РџРµСЂРµСЃС‡РµС‚ РґРѕР±Р°РІРєРё Рє Р°РїРїСЂРѕРєСЃРёРјРёСЂРѕРІР°РЅРЅРѕР№ РјР°С‚СЂРёС†Рµ Р“РµСЃСЃРµРЅР°
 	void Recount_Hessen_approx(real lambda_num);
 
-	//Подсчет произведения векторов
+	//РџРѕРґСЃС‡РµС‚ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ РІРµРєС‚РѕСЂРѕРІ
 	real vector_mult(vector<real> c, vector<real> p);
 	
-	//Нахождение нормы вектора
+	//РќР°С…РѕР¶РґРµРЅРёРµ РЅРѕСЂРјС‹ РІРµРєС‚РѕСЂР°
 	real norm(vector<real> vect);
 
-	//Реализация метода Бройдена
+	//Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґР° Р‘СЂРѕР№РґРµРЅР°
 	void Broyden_method();
 };
 
@@ -207,6 +209,7 @@ void Method::input() {
 	xn.resize(2);
 	s.resize(2);
 	Gradient.resize(2);
+	grad.resize(2);
 	Hessen.resize(2);
 	for (int i = 0; i < Hessen.size(); i++) Hessen[i].resize(2);
 
@@ -220,12 +223,20 @@ void Method::input() {
 
 
 void Method::Hessen_matrix() {
-	Hessen[0][0] = f_x2(x[0], x[1]);
-	Hessen[0][1] = f_xy(x[0], x[1]);
-	Hessen[1][0] = f_xy(x[0], x[1]);
-	Hessen[1][1] = f_y2(x[0], x[1]);
+	if (method == 1) {
+		Hessen[0][0] = f_x2(x[0], x[1]);
+		Hessen[0][1] = f_xy(x[0], x[1]);
+		Hessen[1][0] = f_xy(x[0], x[1]);
+		Hessen[1][1] = f_y2(x[0], x[1]);
 
-	used_f += 4;
+		used_f += 4;
+	}
+	else {
+		Hessen[0][0] = 1;
+		Hessen[0][1] = 0;
+		Hessen[1][0] = 0;
+		Hessen[1][1] = 1;
+	}
 }
 
 
@@ -243,18 +254,21 @@ real Method::angle() {
 
 
 void Method::search_direction() {
-	if(method == 1) Hessen_matrix();
-	Gradient_vector();
+	Hessen_matrix();
 
 	if (method == 1) {
-		real c = 1 / (Hessen[0][0] * Hessen[1][1] - Hessen[1][0] * Hessen[0][1]);
+		Gradient_vector();
 
-		s[0] = c * (Hessen[1][1] * Gradient[0] - Hessen[0][1] * Gradient[1]);
-		s[1] = c * (Hessen[0][0] * Gradient[1] - Hessen[1][0] * Gradient[0]);
+		s[0] = (Hessen[1][1] * Gradient[0] - Hessen[0][1] * Gradient[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[1][0] * Hessen[0][1]);
+		s[1] = (Hessen[0][0] * Gradient[1] - Hessen[1][0] * Gradient[0]) / (Hessen[0][0] * Hessen[1][1] - Hessen[1][0] * Hessen[0][1]);
 	}
 	else {
-		s[0] = Hessen[0][0] * Gradient[0] + Hessen[0][1] * Gradient[1];
-		s[1] = Hessen[1][0] * Gradient[0] + Hessen[1][1] * Gradient[1];
+		grad[0] = f_x(x[0], x[1]);
+		grad[1] = f_y(x[0], x[1]);
+		used_f += 2;
+
+		s[0] = -(Hessen[1][1] * grad[0] - Hessen[0][1] * grad[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
+		s[1] = -(-Hessen[1][0] * grad[0] + Hessen[0][0] * grad[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
 	}
 }
 
@@ -512,79 +526,38 @@ real Method::norm(vector<real> vect) {
 
 
 void Method::Recount_Hessen_approx(real lambda_num) {
-	vector<real> z(2, 0), g(2, 0), dx(2, 0), mult(2, 0);
-	vector <real> tmp(2, 0);
-
-	real det = 0;
-
-	g[0] = f_x(xn[0], xn[1]) - f_x(x[0], x[1]);
-	g[1] = f_y(xn[0], xn[1]) - f_y(x[0], x[1]);
-	used_f += 2;
+	vector<real> dx(2, 0), g(2, 0), tmp(2, 0);
 
 	dx[0] = xn[0] - x[0];
 	dx[1] = xn[1] - x[1];
 
-	//
-	det = Hessen[0][0] * Hessen[1][1] - Hessen[1][0] * Hessen[0][1];
-	mult[0] = (Hessen[1][1] * g[0] - Hessen[0][1] * g[1]) / det;
-	mult[1] = (-Hessen[1][0] * g[0] + Hessen[0][0] * g[1]) / det;
+	Gradient_vector();
 
-	tmp[0] = dx[0] - lambda_num * mult[0];
-	tmp[1] = dx[1] - lambda_num * mult[1];
+	g[0] = Gradient[0] - grad[0];
+	g[1] = Gradient[1] - grad[1];
 
-	if (norm(tmp) < ef) {
-		real del = tmp[0] * g[0] + tmp[1] * g[1];
+	s[0] = -(Hessen[1][1] * g[0] - Hessen[0][1] * g[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
+	s[1] = -(-Hessen[1][0] * g[0] + Hessen[0][0] * g[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
 
-		Hessen[0][0] += pow(tmp[0], 2) / del;
-		Hessen[0][1] += tmp[0] * tmp[1] / del;
-		Hessen[1][0] += tmp[0] * tmp[1] / del;;
-		Hessen[1][1] += pow(tmp[1], 2) / del;
+	tmp[0] = dx[0] + lambda_num * s[0];
+	tmp[1] = dx[1] + lambda_num * s[1];
+
+	if (norm(tmp) > ef)
+	{
+		double det = tmp[0] * g[0] + tmp[1] * g[1];
+
+		Hessen[0][0] += tmp[0] * tmp[0] / det;
+		Hessen[0][1] += tmp[0] * tmp[1] / det;
+		Hessen[1][0] += tmp[0] * tmp[1] / det;
+		Hessen[1][1] += tmp[1] * tmp[1] / det;
 	}
-
-
-
-	/*det = Hessen[0][0] * Hessen[1][1] - Hessen[1][0] * Hessen[0][1];
-	mult[0] = (Hessen[1][1] * g[0] - Hessen[0][1] * g[1]) / det;
-	mult[1] = (-Hessen[1][0] * g[0] + Hessen[0][0] * g[1]) / det;
-
-	for (int i = 0; i < z.size(); i++) z[i] = dx[i] - mult[i];
-
-	real del = z[0] * g[0] + z[1] * g[1];
-
-	Hessen[0][0] += pow(z[0], 2) / del;
-	Hessen[0][1] += z[0] * z[1] / del;
-	Hessen[1][0] += z[0] * z[1] / del;;
-	Hessen[1][1] += pow(z[1], 2) / del;*/
-
-
 }
-
-
-//void Method::Recount_Hessen_approx() {
-//	vector<real> z(2, 0), g(2, 0), dx(2, 0);
-//
-//	g[0] = f_x(xn[0], xn[1]) - f_x(x[0], x[1]);
-//	g[1] = f_y(xn[0], xn[1]) - f_y(x[0], x[1]);
-//	dx[0] = xn[0] - x[0];
-//	dx[1] = xn[1] - x[1];
-//
-//	used_f += 4;
-//
-//	for (int i = 0; i < z.size(); i++) z[i] = dx[i] - vector_mult(Hessen[i], g);
-//
-//	real del = z[0] * g[0] + z[1] * g[1];
-//
-//	Hessen[0][0] += pow(z[0], 2) / del;
-//	Hessen[0][1] += z[0] * z[1] / del;
-//	Hessen[1][0] += z[0] * z[1] / del;;
-//	Hessen[1][1] += pow(z[1], 2) / del;
-//}
 
 
 void Method::Broyden_method() {
 	int iteration = 0;
 	real lambda_num;
-	vector<real> grad(2, 0), g(2, 0), dx(2, 0), tmp(2, 0);
+	vector<real> g(2, 0), dx(2, 0), tmp(2, 0);
 	ofstream out("Broyden.txt");
 
 	Gradient_vector();
@@ -595,19 +568,7 @@ void Method::Broyden_method() {
 		x[0] = xn[0];
 		x[1] = xn[1];
 
-		grad[0] = f_x(x[0], x[1]);
-		grad[1] = f_y(x[0], x[1]);
-
-		Hessen[0][0] = 1;
-		Hessen[0][1] = 0;
-		Hessen[1][0] = 0;
-		Hessen[1][1] = 1;
-
-		s[0] = -(Hessen[1][1] * grad[0] - Hessen[0][1] * grad[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
-		s[1] = -(-Hessen[1][0] * grad[0] + Hessen[0][0] * grad[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
-
-
-		//search_direction();
+		search_direction();
 
 		switch (lambda_max) {
 		case 1:
@@ -620,34 +581,9 @@ void Method::Broyden_method() {
 
 		xn[0] = x[0] - s[0] * lambda_num;
 		xn[1] = x[1] - s[1] * lambda_num;
-		//
 		iteration++;
 
-		dx[0] = xn[0] - x[0];
-		dx[1] = xn[1] - x[1];
-
-		Gradient_vector();
-
-		g[0] = Gradient[0] - grad[0];
-		g[1] = Gradient[1] - grad[1];
-
-		s[0] = -(Hessen[1][1] * g[0] - Hessen[0][1] * g[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
-		s[1] = -(-Hessen[1][0] * g[0] + Hessen[0][0] * g[1]) / (Hessen[0][0] * Hessen[1][1] - Hessen[0][1] * Hessen[1][0]);
-
-		tmp[0] = dx[0] + lambda_num * s[0];
-		tmp[1] = dx[1] + lambda_num * s[1];
-
-		if (norm(tmp) > ef)
-		{
-			double det = tmp[0] * g[0] + tmp[1] * g[1];
-			// новая матрица Этта
-			Hessen[0][0] += tmp[0] * tmp[0] / det;
-			Hessen[0][1] += tmp[0] * tmp[1] / det;
-			Hessen[1][0] += tmp[0] * tmp[1] / det;
-			Hessen[1][1] += tmp[1] * tmp[1] / det;
-		}
-
-		//Recount_Hessen_approx(lambda_num);
+		Recount_Hessen_approx(lambda_num);
 
 		out << iteration << " | ";
 		out << fixed;
